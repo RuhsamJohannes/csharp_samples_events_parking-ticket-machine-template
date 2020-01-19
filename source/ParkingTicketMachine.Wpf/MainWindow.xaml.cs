@@ -17,12 +17,25 @@ namespace ParkingTicketMachine.Wpf
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            FastClock clock = FastClock.Instance;
+            clock.IsRunning = true;
+            clock.OneMinuteIsOver += OnOneMinuteIsOver;
+        }
+
+        private void OnOneMinuteIsOver(object sender, DateTime e)
+        {
+            Title = $"Parkscheinzentrale,  {e.ToShortTimeString()}";
         }
 
         private void ButtonNew_Click(object sender, RoutedEventArgs e)
         {
-            
+            SlotMachineWindow newWindow = new SlotMachineWindow(TextBoxAddress.Text, LogTicket);
+            newWindow.Show();
         }
 
+        private void LogTicket(object sender, Ticket e)
+        {
+            new Ticket();
+        }
     }
 }
