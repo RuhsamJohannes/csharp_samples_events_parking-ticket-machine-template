@@ -20,6 +20,8 @@ namespace ParkingTicketMachine.Wpf
             FastClock clock = FastClock.Instance;
             clock.IsRunning = true;
             clock.OneMinuteIsOver += OnOneMinuteIsOver;
+            new SlotMachineWindow("Limesstrasse" ,PrintTicket).Show();
+            new SlotMachineWindow("Landstrasse", PrintTicket).Show();
         }
 
         private void OnOneMinuteIsOver(object sender, DateTime e)
@@ -29,13 +31,14 @@ namespace ParkingTicketMachine.Wpf
 
         private void ButtonNew_Click(object sender, RoutedEventArgs e)
         {
-            SlotMachineWindow newWindow = new SlotMachineWindow(TextBoxAddress.Text, LogTicket);
+            SlotMachineWindow newWindow = new SlotMachineWindow(TextBoxAddress.Text, PrintTicket);
+            newWindow.Owner = this;
             newWindow.Show();
         }
 
-        private void LogTicket(object sender, Ticket e)
+        private void PrintTicket(object sender, Ticket ticket)
         {
-            new Ticket();
+            TextBlockLog.Text += $"\n  {ticket.TimePrinted.ToShortDateString()} {ticket.TimePrinted.ToShortTimeString()} {ticket.Location}; Parking until: {ticket.EndOfParking}, Paid: {ticket.PaidPrice}c";
         }
     }
 }

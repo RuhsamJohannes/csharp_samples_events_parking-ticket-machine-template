@@ -7,6 +7,14 @@ namespace ParkingTicketMachine.Core
 
         private int _totalAmount = 0;
         private DateTime _endOfParking;
+        private string _location;
+
+        public Ticket CurrentTicket { get; private set; }
+
+        public SlotMachine(string location)
+        {
+            _location = location;
+        }
 
         public DateTime EndOfParking { get => _endOfParking; }
 
@@ -26,11 +34,13 @@ namespace ParkingTicketMachine.Core
             FastClock clock = FastClock.Instance;
             _endOfParking = clock.Time;
 
+            DateTime t0 = clock.Time.Date;
             DateTime t1 = clock.Time.Date.AddHours(18);
-            DateTime t2 = clock.Time.Date.AddDays(1).AddHours(8);
+            DateTime t2 = clock.Time.Date.AddHours(8);
+
 
             //wenn vor hinzufügen der Zeit die Uhrzeit zwischen 18:00 und 08:00 ist wird die Zeit auf 08:00 nächsten Tag gestellt.
-            if (_endOfParking > t1 && _endOfParking < t2)
+            if (t0 < _endOfParking && _endOfParking < t2 || t1 < _endOfParking && _endOfParking < t0.AddDays(1))
             {
                 _endOfParking = t2;
             }
@@ -49,12 +59,20 @@ namespace ParkingTicketMachine.Core
             }
 
             //wenn nach hinzufügen der zeit die Uhrzeit zwischen 18:00 und 08:00 ist werden 14 stunden hinzugefügt.
-            if (_endOfParking > t1 && _endOfParking < t2)
+            if (t0 < _endOfParking && _endOfParking < t2 || t1 < _endOfParking && _endOfParking < t0.AddDays(1))
             {
                 _endOfParking = _endOfParking.AddHours(14);
             }
 
             return _endOfParking;
+        }
+
+        public void PrintTicket(EventHandler<Ticket> ticketReady)
+        {
+            CurrentTicket = new Ticket(_totalAmount, _location, _endOfParking);
+            CurrentTicket.PrintedTicket += ticketReady;
+            CurrentTicket.PrintTicket();
+
         }
 
         public void DeleteAllInfo()

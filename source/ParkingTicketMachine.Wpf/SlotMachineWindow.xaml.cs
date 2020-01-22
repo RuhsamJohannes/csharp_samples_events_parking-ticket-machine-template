@@ -10,11 +10,13 @@ namespace ParkingTicketMachine.Wpf
     public partial class SlotMachineWindow
     {
         private SlotMachine _slotMachine;
+        private EventHandler<Ticket> _ticketReady;
         public SlotMachineWindow(string name, EventHandler<Ticket> ticketReady)
         {
             InitializeComponent();
             Title = name;
-            _slotMachine = new SlotMachine();
+            _ticketReady = ticketReady;
+            _slotMachine = new SlotMachine(name);
         }
 
         private void ButtonInsertCoin_Click(object sender, RoutedEventArgs e)
@@ -38,13 +40,13 @@ namespace ParkingTicketMachine.Wpf
             }
             else
             {
-                TextBoxTimeUntil.Text = "Inssert Coin";
+                TextBoxTimeUntil.Text = "Insert Coin";
             }
         }
 
         private void ButtonPrintTicket_Click(object sender, RoutedEventArgs e)
         {
-
+            _slotMachine.PrintTicket(_ticketReady);
 
 
 
